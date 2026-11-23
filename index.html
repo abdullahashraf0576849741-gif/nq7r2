@@ -200,9 +200,9 @@ function frame(f){
   }else{
     frames.push(copy);total++;
     if(v){voiced++;silent=0}else silent++;
-    if(silent>=40||total>=1250){
+    if(silent>=25||total>=300){
       speaking=false;
-      if(voiced>=15)send(frames);
+      if(voiced>=10)send(frames);
       frames=[];
     }
   }
@@ -220,46 +220,73 @@ function wav(chunks){
 function b64(u8){let s='';for(let i=0;i<u8.length;i+=0x8000)s+=String.fromCharCode.apply(null,u8.subarray(i,i+0x8000));return btoa(s)}
 
 // ---------- Gemini ----------
+let seq=0,shown=0;
 function send(chunks){
-  if(inflight>=2)return;
+  if(inflight>=3)return;
   inflight++;mic.classList.add('busy');setStatus('بيفكر…');
-  ask(b64(wav(chunks))).catch(e=>{setStatus('مشكلة في النت')}).finally(()=>{inflight--;if(!inflight){mic.classList.remove('busy');setStatus(on?'بيسمع':'واقف')}});
+  ask(b64(wav(chunks)),++seq).catch(e=>{setStatus('مشكلة في النت')}).finally(()=>{inflight--;if(!inflight){mic.classList.remove('busy');setStatus(on?'بيسمع':'واقف')}});
 }
-async function ask(audio){
+async function ask(audio,my){
   const key=store.get('key','');if(!key){openSetup();return}
   const dialect=store.get('dialect','المصرية');
-  const prompt=`إنت مساعد صامت بيساعد المستخدم وهو بيتكلم مع ناس في الحقيقة. المستخدم هيبص على الشاشة بسرعة ويقول الرد بصوته.
-الكلام اللي اتقال قبل كده:
+  const prompt=`إنت مساعد صامت بيساعد المستخدم وهو في نقاش مباشر مع حد. المستخدم بيبص على الشاشة ويقول الرد بصوته وهو لسه بيتكلم.
+الكلام اللي اتقال لحد دلوقتي في النقاش:
 ${context.length?context.map(c=>'- '+c).join('\n'):'(لسه مفيش)'}
 
-المقطع الصوتي المرفق هو آخر حاجة اتقالت.
-رجّع JSON بس: {"heard":"...","answer":"..."}
-- heard: تفريغ المقطع زي ما اتقال.
-- answer: لو فيه سؤال أو حاجة محتاجة رد، اكتب رد باللهجة ${dialect}، جملة أو اتنين (أقل من 35 كلمة)، مباشر وسهل يتقال. لو سؤال معلومات ابدأ بالإجابة الصحيحة على طول ومتخترعش أرقام؛ لو مش متأكد قول كده. لو كلام عادي مش محتاج رد أو دوشة، خلّي answer فاضي "".`;
-  const gen={temperature:0.3,maxOutputTokens:400,responseMimeType:'application/json'};
+المقطع الصوتي المرفق هو آخر جزء اتقال حالًا (ممكن يكون جملة مش كاملة، والنقاش لسه مكمّل).
+المطلوب: رد على الجزء ده فورًا، متستناش النقاش يخلص.
+- لو سؤال: الإجابة الصحيحة على طول. متخترعش أرقام؛ لو مش متأكد قول كده.
+- لو رأي أو حجة: اقترح رد أو حجة قوية يقولها المستخدم.
+- لو معلومة اتقالت غلط: قول التصحيح.
+- باللهجة ${dialect}، جملة أو اتنين (أقل من 30 كلمة)، سهل يتقال بصوت.
+- لو المقطع دوشة أو مالوش معنى خالص، اكتب -
+
+الشكل بالظبط:
+السطر الأول: الرد (أو -)
+بعده سطر فيه ### بس
+بعده: تفريغ المقطع زي ما اتقال.`;
+  const gen={temperature:0.3,maxOutputTokens:300};
   if(!noThink)gen.thinkingConfig={thinkingLevel:'low'};
   const body={contents:[{role:'user',parts:[{text:prompt},{inline_data:{mime_type:'audio/wav',data:audio}}]}],generationConfig:gen};
-  let r=await post(key,body);
-  if(r.status===400&&!noThink&&/thinking/i.test(r.text)){noThink=true;delete gen.thinkingConfig;r=await post(key,body)}
+  let r=await streamAsk(key,body,my);
+  if(r.status===400&&!noThink&&/thinking/i.test(r.text)){noThink=true;delete gen.thinkingConfig;r=await streamAsk(key,body,my)}
   if(r.status!==200){
-    let m=r.text;try{m=JSON.parse(r.text).error.message}catch(e){}
-    if(r.status===400&&/API key/i.test(m)){ans.className='empty';ans.textContent='المفتاح مش شغال. دوس ⚙︎ وحط المفتاح تاني.';return}
+    let m=r.text;try{m=JSON.parse(r.text).error.message}catch(e){try{m=JSON.parse(r.text)[0].error.message}catch(e2){}}
+    if(/API key/i.test(m)){ans.className='empty';ans.textContent='المفتاح مش شغال. دوس ⚙︎ وحط المفتاح تاني.';return}
     if(r.status===429){setStatus('كتير ورا بعض… استنى شوية');return}
     setStatus('خطأ '+r.status);return;
   }
-  let txt='';
-  try{for(const p of JSON.parse(r.text).candidates[0].content.parts){if(!p.thought)txt+=p.text||''}}catch(e){}
-  let heard='',answer=txt.trim();
-  try{const j=JSON.parse(txt.slice(txt.indexOf('{'),txt.lastIndexOf('}')+1));heard=(j.heard||'').trim();answer=(j.answer||'').trim()}catch(e){}
-  if(heard){context.push(heard);if(context.length>8)context.shift()}
-  if(answer&&answer!=='…'){
-    if(ans.textContent&&!ans.classList.contains('empty'))pushHist(q.textContent,ans.textContent);
-    q.textContent=heard;ans.className='';ans.textContent=answer;
-  }
+  const parts=r.full.split(/\n?\s*###\s*\n?/);
+  const answer=(parts[0]||'').trim(),heard=(parts[1]||'').trim();
+  if(heard){context.push(heard);if(context.length>12)context.shift()}
+  if(my===shown&&answer&&answer!=="-"){q.textContent=heard}
 }
-async function post(key,body){
-  const r=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent`,{method:'POST',headers:{'Content-Type':'application/json','x-goog-api-key':key},body:JSON.stringify(body)});
-  return {status:r.status,text:await r.text()};
+// يعرض الرد وهو بيتكتب (أسرع)
+async function streamAsk(key,body,my){
+  const res=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:streamGenerateContent?alt=sse`,{method:'POST',headers:{'Content-Type':'application/json','x-goog-api-key':key},body:JSON.stringify(body)});
+  if(res.status!==200)return {status:res.status,text:await res.text(),full:''};
+  const rd=res.body.getReader(),dec=new TextDecoder();
+  let buf='',full='',started=false;
+  for(;;){
+    const {done,value}=await rd.read();if(done)break;
+    buf+=dec.decode(value,{stream:true});
+    let i;
+    while((i=buf.indexOf('\n'))>=0){
+      const line=buf.slice(0,i).trim();buf=buf.slice(i+1);
+      if(!line.startsWith('data:'))continue;
+      try{for(const p of JSON.parse(line.slice(5)).candidates[0].content.parts){if(!p.thought)full+=p.text||''}}catch(e){}
+      const a=full.split('###')[0].trim();
+      if(a&&a!=='-'&&!/^-\s*$/.test(a)&&my>=shown){
+        if(!started){
+          started=true;
+          if(my>shown&&ans.textContent&&!ans.classList.contains('empty'))pushHist(q.textContent,ans.textContent);
+          shown=my;q.textContent='';ans.className='';
+        }
+        if(my===shown)ans.textContent=a;
+      }
+    }
+  }
+  return {status:200,text:'',full};
 }
 function pushHist(h,a){
   history.unshift({h,a});history=history.slice(0,5);
