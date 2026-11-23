@@ -125,8 +125,9 @@ function openSetup(){$('key').value=store.get('key','');$('keyErr').textContent=
 $('gear').onclick=openSetup;
 $('paste').onclick=async()=>{try{$('key').value=(await navigator.clipboard.readText()).trim()}catch(e){$('keyErr').textContent='دوس مطوّل على الخانة واختار لصق'}};
 $('save').onclick=()=>{
-  const k=$('key').value.trim();
-  if(!/^AIza[\w-]{20,}$/.test(k)){$('keyErr').textContent='المفتاح شكله مش مظبوط — لازم يبدأ بـ AIza';return}
+  const k=$('key').value.replace(/[\s\u200b-\u200f\u202a-\u202e\u2066-\u2069\ufeff"'`]/g,'');
+  $('key').value=k;
+  if(k.length<20){$('keyErr').textContent='المفتاح قصير — انسخه تاني كامل';return}
   store.set('key',k);store.set('dialect',$('dialect').value);
   $('setup').hidden=true;
   start(); // الضغطة دي نفسها بتفتح المايك
