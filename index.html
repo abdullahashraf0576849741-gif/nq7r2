@@ -246,18 +246,26 @@ function feed(input){
   const m=new Float32Array(rb.length+n);m.set(rb);m.set(out,rb.length);rb=m;
   while(rb.length>=FR){frame(rb.subarray(0,FR));rb=rb.slice(FR)}
 }
-let wt=0;
+let wt=0,floor=0.004;
+// تقطيع سريع: سكوت قصير (~ثلث ثانية) أو وقفة صغيرة بعد 2.5 ثانية أو 4 ثواني بالكتير
 function frame(f){
   let s=0;for(let i=0;i<f.length;i++)s+=f[i]*f[i];
-  const rms=Math.sqrt(s/f.length),thr=Math.max(noise*2.8,0.012),v=rms>thr;
-  if(++wt%3===0){const lv=Math.min(1,rms/thr*0.5);bars.forEach((b,i)=>{b.style.height=(6+lv*18*(0.55+0.45*Math.abs(Math.sin(wt/4+i*1.3))))+'px'})}
+  const rms=Math.sqrt(s/f.length);
+  floor=Math.min(floor*1.003,Math.max(rms,0.0008)); // أرضية الدوشة بتتبع أقل صوت وبتعلى ببطء
+  const onT=Math.max(floor*3,0.008),offT=Math.max(floor*2,0.006);
+  const v=speaking?rms>offT:rms>onT;
+  if(++wt%3===0){const lv=Math.min(1,rms/onT*0.5);bars.forEach((b,i)=>{b.style.height=(6+lv*18*(0.55+0.45*Math.abs(Math.sin(wt/4+i*1.3))))+'px'})}
   const c=new Float32Array(f);
   if(!speaking){
-    noise=noise*0.97+rms*0.03;pre.push(c);if(pre.length>15)pre.shift();
+    pre.push(c);if(pre.length>12)pre.shift();
     if(v){speaking=true;frames=pre.slice();pre=[];silent=0;voiced=0;total=frames.length}
   }else{
     frames.push(c);total++;if(v){voiced++;silent=0}else silent++;
-    if(silent>=25||total>=300){speaking=false;if(voiced>=10)send(frames);frames=[]}
+    if(silent>=18||(total>=110&&silent>=4)||total>=175){
+      speaking=false;
+      if(voiced>=8)send(frames);
+      frames=[];
+    }
   }
 }
 function wav(chunks){
@@ -273,7 +281,7 @@ function b64(u8){let s='';for(let i=0;i<u8.length;i+=0x8000)s+=String.fromCharCo
 // ---------- الذكاء + المصادر ----------
 let seq=0,shown=0;
 function send(chunks){
-  if(inflight>=3)return;
+  if(inflight>=4)return;
   inflight++;setState('busy',store.get('verify',true)?'بيدوّر في المصادر…':'بيفكر…');
   ask(b64(wav(chunks)),++seq).catch(()=>setState('on','مشكلة في النت')).finally(()=>{inflight--;if(!inflight)setState(on?'on':'off',on?'بيسمع':'واقف')});
 }
@@ -301,7 +309,7 @@ ${verify?`قواعد الدقة (مهمة جدًا):
 async function ask(audio,my){
   const key=store.get('key','');if(!key){openSetup(true);return}
   const gen={temperature:0.2,maxOutputTokens:store.get('len','short')==='long'?500:300};
-  if(!noThink)gen.thinkingConfig={thinkingLevel:'low'};
+  if(!noThink)gen.thinkingConfig={thinkingLevel:'minimal'};
   const body={contents:[{role:'user',parts:[{text:buildPrompt()},{inline_data:{mime_type:'audio/wav',data:audio}}]}],generationConfig:gen};
   if(store.get('verify',true))body.tools=[{google_search:{}}];
   let r=await streamAsk(key,body,my);
