@@ -7,266 +7,326 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="همسة">
-<meta name="theme-color" content="#0b0d12">
+<meta name="theme-color" content="#08090d">
 <meta name="robots" content="noindex,nofollow">
 <title>همسة</title>
-<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' rx='40' fill='%230b0d12'/%3E%3Crect x='70' y='38' width='40' height='70' rx='20' fill='%23ffb547'/%3E%3Cpath d='M52 92a38 38 0 0 0 76 0' stroke='%23ffb547' stroke-width='10' fill='none' stroke-linecap='round'/%3E%3Cpath d='M90 130v14' stroke='%23ffb547' stroke-width='10' stroke-linecap='round'/%3E%3C/svg%3E">
-<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800&display=swap" rel="stylesheet">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 180 180'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%231a1d29'/%3E%3Cstop offset='1' stop-color='%2308090d'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='180' height='180' rx='40' fill='url(%23g)'/%3E%3Cg fill='%23f5b54a'%3E%3Crect x='46' y='74' width='12' height='32' rx='6'/%3E%3Crect x='68' y='56' width='12' height='68' rx='6'/%3E%3Crect x='90' y='42' width='12' height='96' rx='6'/%3E%3Crect x='112' y='62' width='12' height='56' rx='6'/%3E%3Crect x='134' y='80' width='12' height='20' rx='6' opacity='.6'/%3E%3C/g%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#0b0d12;--card:#141821;--ink:#eef0f4;--mute:#8a90a0;--line:#232835;--acc:#ffb547;--accInk:#1a1204;--live:#3ddc97;--bad:#ff6b6b}
+:root{
+  --bg:#08090d;--panel:#11131a;--panel2:#171a23;--line:#22262f;--ink:#f2f3f6;--soft:#c4c8d2;--mute:#7d8493;
+  --acc:#f5b54a;--accInk:#1b1306;--live:#34d399;--warn:#f87171;--ver:#60a5fa;
+  --r:20px;
+}
 *{box-sizing:border-box;min-width:0;-webkit-tap-highlight-color:transparent}
 html,body{height:100%}
-body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.6 Cairo,system-ui,sans-serif;overflow-x:clip;display:flex;flex-direction:column;padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)}
-main{flex:1;display:flex;flex-direction:column;gap:12px;padding:14px 16px;max-width:760px;width:100%;margin:0 auto}
-header{display:flex;align-items:center;gap:10px}
-h1{font-size:22px;margin:0;font-weight:800;line-height:1.1}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 "IBM Plex Sans Arabic",system-ui,sans-serif;overflow-x:clip;
+  display:flex;flex-direction:column;padding:env(safe-area-inset-top) env(safe-area-inset-right) 0 env(safe-area-inset-left)}
+button{font:inherit;color:inherit;border:0;background:none;cursor:pointer}
+svg.i{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex:none}
+
+/* شريط علوي */
+.top{display:flex;align-items:center;gap:12px;padding:14px 18px 10px;max-width:760px;width:100%;margin:0 auto}
+.logo{width:38px;height:38px;border-radius:11px;background:linear-gradient(135deg,#1a1d29,#0c0d12);border:1px solid var(--line);display:grid;place-items:center;flex:none}
+.brand{display:flex;flex-direction:column;line-height:1.2}
+.brand b{font-size:18px;font-weight:700;letter-spacing:-.2px}
+.pill{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;color:var(--mute)}
+.pill i{width:7px;height:7px;border-radius:50%;background:var(--mute)}
+.pill.on i{background:var(--live);box-shadow:0 0 0 3px rgba(52,211,153,.18)}
+.pill.busy i{background:var(--acc);box-shadow:0 0 0 3px rgba(245,181,74,.18)}
+.pill.off i{background:var(--warn)}
 .sp{flex:1}
-#status{color:var(--mute);font-size:14px}
-.mic{width:44px;height:44px;border-radius:50%;border:0;display:grid;place-items:center;background:var(--card);cursor:pointer;flex:none;position:relative}
-.mic svg{width:22px;height:22px;fill:var(--mute)}
-.mic.on{background:var(--live)}.mic.on svg{fill:#04130c}
-.mic.on::after{content:"";position:absolute;inset:0;border-radius:50%;box-shadow:0 0 0 0 var(--live);animation:p 1.6s infinite}
-.mic.busy{background:var(--acc)}.mic.busy svg{fill:var(--accInk)}
-@keyframes p{70%{box-shadow:0 0 0 12px transparent}100%{box-shadow:0 0 0 0 transparent}}
-.meter{height:4px;border-radius:2px;background:var(--line);overflow:hidden}
-.meter i{display:block;height:100%;width:0;background:var(--live);transition:width .08s}
-.answer{background:var(--card);border-radius:22px;padding:22px 20px;flex:1;min-height:45vh;display:flex;flex-direction:column;gap:10px}
-.q{color:var(--mute);font-size:14px;line-height:1.5;max-height:3em;overflow:hidden}
-#ans{font-size:var(--fs,30px);line-height:1.45;font-weight:700;white-space:pre-wrap;flex:1}
-#ans.empty{color:var(--mute);font-weight:600;font-size:19px}
-.tools{display:flex;gap:8px}
-button{font:inherit;color:inherit}
-.tools button,.chip{background:transparent;border:1px solid var(--line);border-radius:12px;min-width:44px;min-height:40px;padding:0 12px;font-size:15px;cursor:pointer;color:var(--ink)}
-.hist{display:flex;flex-direction:column;gap:8px}
-.hist div{background:var(--card);border-radius:14px;padding:10px 12px;font-size:15px}
-.hist small{display:block;color:var(--mute);font-size:13px}
-/* شاشات فوق الصفحة */
-.sheet{position:fixed;inset:0;z-index:9;background:var(--bg);display:flex;flex-direction:column;justify-content:center;gap:16px;padding:24px max(6vw,20px) calc(24px + env(safe-area-inset-bottom))}
+.iconbtn{width:42px;height:42px;border-radius:12px;display:grid;place-items:center;background:var(--panel);border:1px solid var(--line);color:var(--soft)}
+
+/* المحتوى */
+main{flex:1;overflow-y:auto;padding:4px 18px 140px;max-width:760px;width:100%;margin:0 auto;display:flex;flex-direction:column;gap:14px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:20px 20px 16px;display:flex;flex-direction:column;gap:12px;min-height:44vh}
+.label{display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--mute);font-weight:500}
+.heard{font-size:14px;color:var(--mute);line-height:1.55;max-height:4.6em;overflow:hidden;border-inline-start:2px solid var(--line);padding-inline-start:10px}
+.heard:empty{display:none}
+#ans{font-size:var(--fs,28px);line-height:1.5;font-weight:600;white-space:pre-wrap;flex:1;letter-spacing:-.2px}
+#ans.empty{color:var(--mute);font-weight:500;font-size:17px}
+.cursor::after{content:"";display:inline-block;width:.45em;height:1em;margin-inline-start:4px;vertical-align:-.12em;background:var(--acc);border-radius:2px;animation:blink 1s steps(2) infinite}
+@keyframes blink{50%{opacity:0}}
+.src{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.src:empty{display:none}
+.badge{display:inline-flex;align-items:center;gap:5px;font-size:12.5px;font-weight:600;color:var(--ver)}
+.chip{display:inline-flex;align-items:center;max-width:180px;font-size:12.5px;color:var(--soft);background:var(--panel2);border:1px solid var(--line);border-radius:999px;padding:4px 10px;text-decoration:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.nosrc{font-size:12.5px;color:var(--mute)}
+
+.histh{font-size:13px;color:var(--mute);font-weight:500;padding:4px 2px 0}
+.histh:empty{display:none}
+.item{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:12px 14px;display:flex;flex-direction:column;gap:6px}
+.item small{color:var(--mute);font-size:12.5px;line-height:1.5}
+.item p{margin:0;font-size:15.5px;color:var(--soft)}
+
+/* الشريط السفلي */
+.dock{position:fixed;inset-inline:0;bottom:0;padding:14px 18px calc(14px + env(safe-area-inset-bottom));background:linear-gradient(to top,var(--bg) 70%,transparent)}
+.dockin{max-width:520px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.side{width:56px;height:56px;border-radius:18px;background:var(--panel);border:1px solid var(--line);display:grid;place-items:center;color:var(--soft);font-weight:700;font-size:15px}
+.side small{display:block;font-size:10.5px;color:var(--mute);font-weight:500;margin-top:-4px}
+.micbtn{flex:1;max-width:240px;height:64px;border-radius:22px;background:var(--panel2);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;gap:12px;font-weight:700;font-size:16px}
+.micbtn.on{background:var(--live);color:#032016;border-color:transparent}
+.micbtn.off{background:var(--acc);color:var(--accInk);border-color:transparent}
+.wave{display:flex;align-items:center;gap:3px;height:24px}
+.wave b{width:4px;border-radius:2px;background:currentColor;height:6px;transition:height .09s}
+
+/* الشاشات */
+.sheet{position:fixed;inset:0;z-index:10;background:rgba(4,5,8,.72);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);display:flex;align-items:flex-end;justify-content:center}
 .sheet[hidden]{display:none}
-.sheet h2{font-size:30px;line-height:1.2;margin:0;font-weight:800}
-.sheet p{margin:0;color:var(--mute)}
-.sheet input,.sheet select{width:100%;font:16px/1.4 system-ui,sans-serif;direction:ltr;padding:14px;border-radius:14px;border:1px solid var(--line);background:var(--card);color:var(--ink)}
-.sheet select{direction:rtl;font-family:Cairo,system-ui}
-.big{border:0;border-radius:16px;min-height:56px;font-weight:800;font-size:18px;background:var(--acc);color:var(--accInk);cursor:pointer;width:100%}
-.ghost{background:var(--card);color:var(--ink)}
-a{color:var(--acc)}
-.err{color:var(--bad);font-size:14px;min-height:1.4em}
-#tap{justify-content:center;align-items:center;text-align:center;cursor:pointer}
-#tap .mic{width:120px;height:120px;background:var(--acc)}#tap .mic svg{width:56px;height:56px;fill:var(--accInk)}
-button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--acc);outline-offset:2px}
-@media(prefers-reduced-motion:reduce){.mic.on::after{animation:none}}
+.box{width:100%;max-width:560px;background:var(--panel);border:1px solid var(--line);border-bottom:0;border-radius:26px 26px 0 0;padding:22px 20px calc(22px + env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:14px;max-height:92vh;overflow-y:auto}
+.box h2{margin:0;font-size:24px;font-weight:700;line-height:1.3}
+.box p{margin:0;color:var(--mute);font-size:14.5px}
+.field{display:flex;flex-direction:column;gap:6px}
+.field>span{font-size:13px;color:var(--soft);font-weight:500}
+.box input{width:100%;font:16px/1.4 system-ui,sans-serif;direction:ltr;padding:14px;border-radius:14px;border:1px solid var(--line);background:var(--bg);color:var(--ink)}
+.seg{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px;background:var(--bg);border:1px solid var(--line);border-radius:14px;padding:4px}
+.seg.two{grid-template-columns:repeat(2,minmax(0,1fr))}
+.seg button{min-height:40px;border-radius:10px;font-size:14px;color:var(--mute);font-weight:600}
+.seg button[aria-pressed=true]{background:var(--panel2);color:var(--ink);box-shadow:0 0 0 1px var(--line)}
+.row{display:flex;align-items:center;gap:12px;background:var(--bg);border:1px solid var(--line);border-radius:14px;padding:12px 14px}
+.row div{flex:1}.row b{display:block;font-size:15px;font-weight:600}.row small{color:var(--mute);font-size:12.5px}
+.tog{width:50px;height:30px;border-radius:15px;background:var(--line);position:relative;flex:none;transition:background .2s}
+.tog::after{content:"";position:absolute;top:3px;inset-inline-start:3px;width:24px;height:24px;border-radius:50%;background:#fff;transition:inset-inline-start .2s}
+.tog[aria-checked=true]{background:var(--live)}.tog[aria-checked=true]::after{inset-inline-start:23px}
+.big{min-height:54px;border-radius:16px;background:var(--acc);color:var(--accInk);font-weight:700;font-size:17px;width:100%}
+.ghost{background:var(--panel2);color:var(--ink);border:1px solid var(--line)}
+.err{color:var(--warn);font-size:13.5px;min-height:1.3em}
+.box a{color:var(--acc)}
+.tap{align-items:center;text-align:center}
+.tap .box{border-radius:26px;margin:20px;border-bottom:1px solid var(--line);align-items:center;padding:34px 24px}
+.tapmic{width:96px;height:96px;border-radius:30px;background:var(--acc);color:var(--accInk);display:grid;place-items:center}
+.tapmic svg.i{width:44px;height:44px}
+button:focus-visible,input:focus-visible,a:focus-visible{outline:2px solid var(--acc);outline-offset:2px}
+@media(prefers-reduced-motion:reduce){.cursor::after{animation:none}}
 </style>
 </head>
 <body>
-<svg width="0" height="0" style="position:absolute"><symbol id="m" viewBox="0 0 24 24"><path d="M12 14a3 3 0 0 0 3-3V5a3 3 0 0 0-6 0v6a3 3 0 0 0 3 3zm5-3a5 5 0 0 1-10 0H5a7 7 0 0 0 6 6.9V21h2v-3.1A7 7 0 0 0 19 11h-2z"/></symbol></svg>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-mic" viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></symbol>
+  <symbol id="i-gear" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></symbol>
+  <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3l8 3v6c0 4.5-3.4 8.3-8 9-4.6-.7-8-4.5-8-9V6l8-3z"/><path d="M8.5 12l2.5 2.5 4.5-5"/></symbol>
+  <symbol id="i-new" viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></symbol>
+  <symbol id="i-spark" viewBox="0 0 24 24"><path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/></symbol>
+</svg>
+
+<div class="top">
+  <div class="logo"><svg viewBox="0 0 24 24" width="22" height="22"><g fill="#f5b54a"><rect x="3" y="10" width="2.4" height="5" rx="1.2"/><rect x="7.2" y="7" width="2.4" height="11" rx="1.2"/><rect x="11.4" y="4" width="2.4" height="17" rx="1.2"/><rect x="15.6" y="8" width="2.4" height="9" rx="1.2"/><rect x="19.8" y="11" width="2.4" height="3" rx="1.2" opacity=".6"/></g></svg></div>
+  <div class="brand"><b>همسة</b><span class="pill" id="pill"><i></i><span id="status">جاهز</span></span></div>
+  <span class="sp"></span>
+  <button class="iconbtn" id="gear" aria-label="الإعدادات"><svg class="i"><use href="#i-gear"/></svg></button>
+</div>
 
 <main>
-  <header>
-    <button class="mic" id="mic" aria-label="المايك"><svg><use href="#m"/></svg></button>
-    <h1>همسة</h1>
-    <span id="status">جاهز</span>
-    <span class="sp"></span>
-    <button class="chip" id="gear">⚙︎</button>
-  </header>
-  <div class="meter"><i id="lvl"></i></div>
-  <section class="answer" aria-live="polite">
-    <div class="q" id="q"></div>
-    <div id="ans" class="empty">بيسمع… أول ما حد يخلص كلامه، الرد هيظهر هنا من غير صوت.</div>
-    <div class="tools">
-      <button id="smaller">ا-</button><button id="bigger">ا+</button>
-      <span class="sp"></span>
-      <button id="clear">موضوع جديد</button>
-    </div>
+  <section class="card" aria-live="polite">
+    <div class="label"><svg class="i" style="width:16px;height:16px"><use href="#i-spark"/></svg>الرد المقترح</div>
+    <div class="heard" id="heard"></div>
+    <div id="ans" class="empty">بيسمع النقاش… وأول ما حد يقول حاجة، هيظهر هنا رد مختصر ومتأكد منه.</div>
+    <div class="src" id="src"></div>
   </section>
-  <div class="hist" id="hist"></div>
+  <div class="histh" id="histh"></div>
+  <div id="hist" style="display:flex;flex-direction:column;gap:10px"></div>
 </main>
 
-<!-- أول مرة: المفتاح -->
-<div class="sheet" id="setup" hidden>
-  <h2>أهلًا 👋<br>خطوة واحدة بس</h2>
-  <p>الصق مفتاح Gemini اللي نسخته. هيتحفظ على موبايلك بس، ومش هيروح لأي مكان تاني.</p>
-  <input id="key" placeholder="AIza…" autocomplete="off" autocapitalize="off" spellcheck="false">
-  <select id="dialect">
-    <option value="المصرية">مصري</option>
-    <option value="الخليجية السعودية">سعودي / خليجي</option>
-    <option value="الشامية">شامي</option>
-    <option value="العربية الفصحى المبسطة">فصحى</option>
-  </select>
-  <div class="err" id="keyErr"></div>
-  <button class="big" id="save">يلا نبدأ</button>
-  <button class="big ghost" id="paste">لصق المفتاح</button>
-  <p>معندكش مفتاح؟ <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">هاته من هنا</a></p>
-</div>
+<div class="dock"><div class="dockin">
+  <button class="side" id="size" aria-label="حجم الخط">Aa<small>الخط</small></button>
+  <button class="micbtn" id="mic"><span class="wave" id="wave"><b></b><b></b><b></b><b></b><b></b></span><span id="micTxt">ابدأ السماع</span></button>
+  <button class="side" id="clear" aria-label="موضوع جديد"><svg class="i"><use href="#i-new"/></svg><small>جديد</small></button>
+</div></div>
 
-<!-- لمسة للبدء (الآيفون محتاجها عشان يفتح المايك) -->
-<div class="sheet" id="tap" hidden>
-  <div class="mic"><svg><use href="#m"/></svg></div>
+<!-- الإعدادات / أول مرة -->
+<div class="sheet" id="setup" hidden><div class="box">
+  <h2 id="setupTitle">الإعدادات</h2>
+  <p id="setupSub">مفتاحك بيتحفظ على موبايلك بس.</p>
+  <label class="field"><span>مفتاح Gemini</span>
+    <input id="key" placeholder="الصق المفتاح هنا" autocomplete="off" autocapitalize="off" spellcheck="false"></label>
+  <button class="big ghost" id="paste">لصق المفتاح</button>
+  <div class="field"><span>اللهجة</span>
+    <div class="seg" id="dialects">
+      <button data-v="المصرية">مصري</button><button data-v="الخليجية السعودية">سعودي</button>
+      <button data-v="الشامية">شامي</button><button data-v="العربية الفصحى المبسطة">فصحى</button>
+    </div></div>
+  <div class="field"><span>طول الرد</span>
+    <div class="seg two" id="lengths"><button data-v="short">مختصر</button><button data-v="long">مفصّل</button></div></div>
+  <div class="row"><div><b>تحقق من مصادر موثوقة</b><small>بيدوّر في جوجل ويعتمد على المواقع الرسمية ووكالات الأخبار الكبيرة. أدق، بس أبطأ ثانية أو اتنين.</small></div>
+    <button class="tog" id="verify" role="switch" aria-checked="true" aria-label="تحقق من المصادر"></button></div>
+  <div class="err" id="keyErr"></div>
+  <button class="big" id="save">حفظ</button>
+  <p>معندكش مفتاح؟ <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener">هاته من هنا</a></p>
+</div></div>
+
+<div class="sheet tap" id="tap" hidden><div class="box">
+  <div class="tapmic"><svg class="i"><use href="#i-mic"/></svg></div>
   <h2>المس أي مكان</h2>
   <p>عشان المايك يشتغل ويفضل شغال</p>
-</div>
+</div></div>
 
 <script>
 {
 const $=id=>document.getElementById(id);
 const store={get(k,d){try{const v=localStorage.getItem(k);return v==null?d:JSON.parse(v)}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
-const ans=$('ans'),q=$('q'),statusEl=$('status'),mic=$('mic'),hist=$('hist'),lvl=$('lvl');
+const ans=$('ans'),heardEl=$('heard'),srcEl=$('src'),statusEl=$('status'),pill=$('pill'),mic=$('mic'),micTxt=$('micTxt'),hist=$('hist');
+const bars=[...$('wave').children];
 const MODEL='gemini-flash-latest';
-let ctx=null,stream=null,src=null,proc=null,on=false,wake=null,inflight=0,noThink=false,history=[],context=[];
+let ctx=null,media=null,srcNode=null,proc=null,on=false,wake=null,inflight=0,noThink=false,history=[],context=[];
 
-let fs=store.get('fs',30);
-const applyFs=()=>document.documentElement.style.setProperty('--fs',fs+'px');applyFs();
-$('bigger').onclick=()=>{fs=Math.min(48,fs+3);applyFs();store.set('fs',fs)};
-$('smaller').onclick=()=>{fs=Math.max(18,fs-3);applyFs();store.set('fs',fs)};
-$('dialect').value=store.get('dialect','المصرية');
-const setStatus=t=>{statusEl.textContent=t};
+// ---------- واجهة ----------
+const sizes=[22,26,30,36,42];let fsI=store.get('fsI',2);
+const applyFs=()=>document.documentElement.style.setProperty('--fs',sizes[fsI]+'px');applyFs();
+$('size').onclick=()=>{fsI=(fsI+1)%sizes.length;applyFs();store.set('fsI',fsI)};
+function setState(s,t){pill.className='pill '+s;statusEl.textContent=t;
+  mic.className='micbtn '+(on?'on':'off');micTxt.textContent=on?(s==='busy'?'بيدوّر…':'بيسمع'):'ابدأ السماع'}
+function segInit(id,key,def){const el=$(id);const set=v=>{for(const b of el.children)b.setAttribute('aria-pressed',b.dataset.v===v);el.dataset.val=v};
+  set(store.get(key,def));for(const b of el.children)b.onclick=()=>set(b.dataset.v);return()=>el.dataset.val}
+const getDialect=segInit('dialects','dialect','المصرية'),getLen=segInit('lengths','len','short');
+const vt=$('verify');vt.setAttribute('aria-checked',store.get('verify',true));vt.onclick=()=>vt.setAttribute('aria-checked',vt.getAttribute('aria-checked')!=='true');
 
-// ---------- المفتاح ----------
-function openSetup(){$('key').value=store.get('key','');$('keyErr').textContent='';$('setup').hidden=false}
-$('gear').onclick=openSetup;
-$('paste').onclick=async()=>{try{$('key').value=(await navigator.clipboard.readText()).trim()}catch(e){$('keyErr').textContent='دوس مطوّل على الخانة واختار لصق'}};
+function openSetup(first){
+  $('key').value=store.get('key','');$('keyErr').textContent='';
+  $('setupTitle').textContent=first?'أهلًا، خطوة واحدة بس':'الإعدادات';
+  $('setupSub').textContent=first?'الصق مفتاح Gemini اللي نسخته. هيتحفظ على موبايلك بس.':'مفتاحك بيتحفظ على موبايلك بس.';
+  $('save').textContent=first?'يلا نبدأ':'حفظ';
+  $('setup').hidden=false;
+}
+$('gear').onclick=()=>openSetup(false);
+$('setup').addEventListener('click',e=>{if(e.target===$('setup')&&store.get('key',''))$('setup').hidden=true});
+$('paste').onclick=async()=>{try{$('key').value=(await navigator.clipboard.readText()).trim()}catch(e){$('keyErr').textContent='دوس مطوّل على الخانة واختار «لصق»'}};
 $('save').onclick=()=>{
-  const k=$('key').value.replace(/[\s\u200b-\u200f\u202a-\u202e\u2066-\u2069\ufeff"'`]/g,'');
+  const k=$('key').value.replace(/[\s​-‏‪-‮⁦-⁩﻿"'`]/g,'');
   $('key').value=k;
-  if(k.length<20){$('keyErr').textContent='المفتاح قصير — انسخه تاني كامل';return}
-  store.set('key',k);store.set('dialect',$('dialect').value);
+  if(k.length<20){$('keyErr').textContent='المفتاح ناقص — انسخه تاني كامل';return}
+  store.set('key',k);store.set('dialect',getDialect());store.set('len',getLen());store.set('verify',vt.getAttribute('aria-checked')==='true');
   $('setup').hidden=true;
-  start(); // الضغطة دي نفسها بتفتح المايك
+  if(!on){store.set('paused',false);start()}
 };
 
 // ---------- الصوت ----------
-const RATE=16000;
-let frames=[],pre=[],speaking=false,silent=0,voiced=0,total=0,noise=0.01;
-const FR=320; // 20ms على 16k
-let rb=new Float32Array(0);
+const RATE=16000,FR=320;
+let frames=[],pre=[],speaking=false,silent=0,voiced=0,total=0,noise=0.01,rb=new Float32Array(0);
 
 async function start(){
   if(on)return;
   try{
-    if(!ctx){ctx=new (window.AudioContext||window.webkitAudioContext)()}
+    if(!ctx)ctx=new (window.AudioContext||window.webkitAudioContext)();
     if(ctx.state!=='running')await ctx.resume();
-    if(!stream||!stream.active){
-      stream=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true,noiseSuppression:true,autoGainControl:true}});
-      stream.getAudioTracks()[0].addEventListener('ended',()=>{stopAudio();ensure()});
+    if(!media||!media.active){
+      media=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true,noiseSuppression:true,autoGainControl:true}});
+      media.getAudioTracks()[0].addEventListener('ended',()=>{stopAudio();ensure()});
     }
-    if(src)src.disconnect();if(proc)proc.disconnect();
-    src=ctx.createMediaStreamSource(stream);
+    try{srcNode&&srcNode.disconnect();proc&&proc.disconnect()}catch(e){}
+    srcNode=ctx.createMediaStreamSource(media);
     proc=ctx.createScriptProcessor(4096,1,1);
     proc.onaudioprocess=e=>feed(e.inputBuffer.getChannelData(0));
-    src.connect(proc);proc.connect(ctx.destination);
-    on=true;$('tap').hidden=true;mic.classList.add('on');setStatus('بيسمع');
+    srcNode.connect(proc);proc.connect(ctx.destination);
+    on=true;$('tap').hidden=true;setState(inflight?'busy':'on',inflight?'بيدوّر في المصادر…':'بيسمع');
     try{wake=await navigator.wakeLock?.request('screen')}catch(e){}
   }catch(e){
-    on=false;mic.classList.remove('on');
+    on=false;
     if(e&&e.name==='NotAllowedError'){
-      $('tap').hidden=true;
+      $('tap').hidden=true;setState('off','المايك مقفول');
       ans.className='empty';
-      ans.textContent='المايك مقفول للصفحة دي.\nمن Safari: دوس «aA» جنب العنوان ← إعدادات الموقع ← الميكروفون ← سماح. وبعدين المس زرار المايك فوق.';
-      setStatus('المايك مقفول');
+      ans.textContent='المايك مقفول للصفحة دي.\nفي Safari: دوس «aA» جنب العنوان ← إعدادات الموقع ← الميكروفون ← سماح. وبعدين دوس «ابدأ السماع».';
     }else{$('tap').hidden=false}
   }
 }
 function stopAudio(){
-  on=false;mic.classList.remove('on');
-  try{src&&src.disconnect();proc&&proc.disconnect()}catch(e){}
-  try{wake&&wake.release()}catch(e){}wake=null;
+  on=false;try{srcNode&&srcNode.disconnect();proc&&proc.disconnect()}catch(e){}
+  try{wake&&wake.release()}catch(e){}wake=null;bars.forEach(b=>b.style.height='6px');
 }
-function ensure(){ // لو وقف لوحده، يرجع
-  if(store.get('key','')&&!store.get('paused',false)&&document.visibilityState==='visible'){
-    if(ctx&&ctx.state!=='running'){ctx.resume().then(()=>{if(!on)start()}).catch(()=>{$('tap').hidden=false})}
+function ensure(){
+  if(store.get('key','')&&!store.get('paused',false)&&document.visibilityState==='visible'&&$('setup').hidden){
+    if(ctx&&ctx.state!=='running')ctx.resume().then(()=>{if(!on)start()}).catch(()=>{$('tap').hidden=false});
     else if(!on)start();
   }
 }
-
-// تحويل لـ 16k
 function feed(input){
-  const ratio=ctx.sampleRate/RATE;
-  const n=Math.floor(input.length/ratio);
-  const out=new Float32Array(n);
-  for(let i=0;i<n;i++){let s=0,a=Math.floor(i*ratio),b=Math.floor((i+1)*ratio);for(let j=a;j<b;j++)s+=input[j];out[i]=s/Math.max(1,b-a)}
+  const ratio=ctx.sampleRate/RATE,n=Math.floor(input.length/ratio),out=new Float32Array(n);
+  for(let i=0;i<n;i++){let s=0;const a=Math.floor(i*ratio),b=Math.floor((i+1)*ratio);for(let j=a;j<b;j++)s+=input[j];out[i]=s/Math.max(1,b-a)}
   const m=new Float32Array(rb.length+n);m.set(rb);m.set(out,rb.length);rb=m;
   while(rb.length>=FR){frame(rb.subarray(0,FR));rb=rb.slice(FR)}
 }
+let wt=0;
 function frame(f){
   let s=0;for(let i=0;i<f.length;i++)s+=f[i]*f[i];
-  const rms=Math.sqrt(s/f.length);
-  const thr=Math.max(noise*2.8,0.012);
-  const v=rms>thr;
-  lvl.style.width=Math.min(100,rms/thr*35)+'%';
-  const copy=new Float32Array(f);
+  const rms=Math.sqrt(s/f.length),thr=Math.max(noise*2.8,0.012),v=rms>thr;
+  if(++wt%3===0){const lv=Math.min(1,rms/thr*0.5);bars.forEach((b,i)=>{b.style.height=(6+lv*18*(0.55+0.45*Math.abs(Math.sin(wt/4+i*1.3))))+'px'})}
+  const c=new Float32Array(f);
   if(!speaking){
-    noise=noise*0.97+rms*0.03;
-    pre.push(copy);if(pre.length>15)pre.shift();
+    noise=noise*0.97+rms*0.03;pre.push(c);if(pre.length>15)pre.shift();
     if(v){speaking=true;frames=pre.slice();pre=[];silent=0;voiced=0;total=frames.length}
   }else{
-    frames.push(copy);total++;
-    if(v){voiced++;silent=0}else silent++;
-    if(silent>=25||total>=300){
-      speaking=false;
-      if(voiced>=10)send(frames);
-      frames=[];
-    }
+    frames.push(c);total++;if(v){voiced++;silent=0}else silent++;
+    if(silent>=25||total>=300){speaking=false;if(voiced>=10)send(frames);frames=[]}
   }
 }
 function wav(chunks){
-  const len=chunks.reduce((a,c)=>a+c.length,0);
-  const buf=new ArrayBuffer(44+len*2),d=new DataView(buf);
+  const len=chunks.reduce((a,c)=>a+c.length,0),buf=new ArrayBuffer(44+len*2),d=new DataView(buf);
   const w=(o,t)=>{for(let i=0;i<t.length;i++)d.setUint8(o+i,t.charCodeAt(i))};
-  w(0,'RIFF');d.setUint32(4,36+len*2,true);w(8,'WAVE');w(12,'fmt ');d.setUint32(16,16,true);
-  d.setUint16(20,1,true);d.setUint16(22,1,true);d.setUint32(24,RATE,true);d.setUint32(28,RATE*2,true);
-  d.setUint16(32,2,true);d.setUint16(34,16,true);w(36,'data');d.setUint32(40,len*2,true);
+  w(0,'RIFF');d.setUint32(4,36+len*2,true);w(8,'WAVE');w(12,'fmt ');d.setUint32(16,16,true);d.setUint16(20,1,true);d.setUint16(22,1,true);
+  d.setUint32(24,RATE,true);d.setUint32(28,RATE*2,true);d.setUint16(32,2,true);d.setUint16(34,16,true);w(36,'data');d.setUint32(40,len*2,true);
   let o=44;for(const c of chunks)for(let i=0;i<c.length;i++){const x=Math.max(-1,Math.min(1,c[i]));d.setInt16(o,x<0?x*0x8000:x*0x7fff,true);o+=2}
   return new Uint8Array(buf);
 }
 function b64(u8){let s='';for(let i=0;i<u8.length;i+=0x8000)s+=String.fromCharCode.apply(null,u8.subarray(i,i+0x8000));return btoa(s)}
 
-// ---------- Gemini ----------
+// ---------- الذكاء + المصادر ----------
 let seq=0,shown=0;
 function send(chunks){
   if(inflight>=3)return;
-  inflight++;mic.classList.add('busy');setStatus('بيفكر…');
-  ask(b64(wav(chunks)),++seq).catch(e=>{setStatus('مشكلة في النت')}).finally(()=>{inflight--;if(!inflight){mic.classList.remove('busy');setStatus(on?'بيسمع':'واقف')}});
+  inflight++;setState('busy',store.get('verify',true)?'بيدوّر في المصادر…':'بيفكر…');
+  ask(b64(wav(chunks)),++seq).catch(()=>setState('on','مشكلة في النت')).finally(()=>{inflight--;if(!inflight)setState(on?'on':'off',on?'بيسمع':'واقف')});
 }
-async function ask(audio,my){
-  const key=store.get('key','');if(!key){openSetup();return}
-  const dialect=store.get('dialect','المصرية');
-  const prompt=`إنت مساعد صامت بيساعد المستخدم وهو في نقاش مباشر مع حد. المستخدم بيبص على الشاشة ويقول الرد بصوته وهو لسه بيتكلم.
-الكلام اللي اتقال لحد دلوقتي في النقاش:
+function buildPrompt(){
+  const dialect=store.get('dialect','المصرية'),long=store.get('len','short')==='long',verify=store.get('verify',true);
+  return `إنت مساعد صامت ودقيق جدًا بيساعد المستخدم وهو في نقاش مباشر. المستخدم بيبص على الشاشة ويقول الرد بصوته.
+الكلام اللي اتقال لحد دلوقتي:
 ${context.length?context.map(c=>'- '+c).join('\n'):'(لسه مفيش)'}
 
-المقطع الصوتي المرفق هو آخر جزء اتقال حالًا (ممكن يكون جملة مش كاملة، والنقاش لسه مكمّل).
-المطلوب: رد على الجزء ده فورًا، متستناش النقاش يخلص.
-- لو سؤال: الإجابة الصحيحة على طول. متخترعش أرقام؛ لو مش متأكد قول كده.
-- لو رأي أو حجة: اقترح رد أو حجة قوية يقولها المستخدم.
-- لو معلومة اتقالت غلط: قول التصحيح.
-- باللهجة ${dialect}، جملة أو اتنين (أقل من 30 كلمة)، سهل يتقال بصوت.
-- لو المقطع دوشة أو مالوش معنى خالص، اكتب -
+المقطع الصوتي المرفق هو آخر جزء اتقال حالًا (ممكن يكون جملة مش كاملة، والنقاش مكمّل). رد على الجزء ده فورًا.
+${verify?`قواعد الدقة (مهمة جدًا):
+- أي سؤال أو معلومة أو رقم أو خبر أو تاريخ أو موضوع سياسي: دوّر بـ Google Search قبل ما ترد، واعتمد بس على مصادر موثوقة: المواقع الحكومية والرسمية، المنظمات الدولية (الأمم المتحدة، منظمة الصحة…)، وكالات الأنباء الكبيرة (رويترز، أسوشيتد برس، فرانس برس، بي بي سي)، والمواقع العلمية والأكاديمية. تجاهل المنتديات والسوشيال ميديا والمدونات.
+- في السياسة: قول الحقائق المؤكدة بس، ونسب كل معلومة لمصدرها (مثلًا: حسب رويترز…)، ومتاخدش صف ولا تقول رأي.
+- لو المصادر مختلفة أو المعلومة مش مؤكدة، قول كده بوضوح (مثلًا: مفيش مصدر مؤكد).
+- لو مجرد رأي أو كلام عادي، مش لازم تدوّر.`:'- متخترعش أرقام أو معلومات؛ لو مش متأكد قول كده.'}
+- لو سؤال: الإجابة على طول. لو حجة: اقترح رد قوي ومبني على حقائق. لو معلومة غلط اتقالت: صحّحها.
+- باللهجة ${dialect}، ${long?'من 2 لـ 4 جمل (أقل من 70 كلمة)':'جملة أو اتنين (أقل من 35 كلمة)'}، سهل يتقال بصوت، من غير مقدمات ولا تنسيق.
+- لو المقطع دوشة أو مالوش معنى، اكتب -
 
 الشكل بالظبط:
 السطر الأول: الرد (أو -)
 بعده سطر فيه ### بس
 بعده: تفريغ المقطع زي ما اتقال.`;
-  const gen={temperature:0.3,maxOutputTokens:300};
+}
+async function ask(audio,my){
+  const key=store.get('key','');if(!key){openSetup(true);return}
+  const gen={temperature:0.2,maxOutputTokens:store.get('len','short')==='long'?500:300};
   if(!noThink)gen.thinkingConfig={thinkingLevel:'low'};
-  const body={contents:[{role:'user',parts:[{text:prompt},{inline_data:{mime_type:'audio/wav',data:audio}}]}],generationConfig:gen};
+  const body={contents:[{role:'user',parts:[{text:buildPrompt()},{inline_data:{mime_type:'audio/wav',data:audio}}]}],generationConfig:gen};
+  if(store.get('verify',true))body.tools=[{google_search:{}}];
   let r=await streamAsk(key,body,my);
   if(r.status===400&&!noThink&&/thinking/i.test(r.text)){noThink=true;delete gen.thinkingConfig;r=await streamAsk(key,body,my)}
+  if(r.status===429&&body.tools){delete body.tools;r=await streamAsk(key,body,my)} // خلص حد البحث المجاني؟ نكمّل من غير بحث
   if(r.status!==200){
     let m=r.text;try{m=JSON.parse(r.text).error.message}catch(e){try{m=JSON.parse(r.text)[0].error.message}catch(e2){}}
-    if(/API key/i.test(m)){ans.className='empty';ans.textContent='المفتاح مش شغال. دوس ⚙︎ وحط المفتاح تاني.';return}
-    if(r.status===429){setStatus('كتير ورا بعض… استنى شوية');return}
-    setStatus('خطأ '+r.status);return;
+    if(/API key/i.test(m)){ans.className='empty';ans.textContent='المفتاح مش شغال. دوس الإعدادات وحط المفتاح تاني.';return}
+    if(r.status===429){setState('busy','وصلت للحد المجاني… استنى دقيقة');return}
+    setState('on','خطأ '+r.status);return;
   }
-  const parts=r.full.split(/\n?\s*###\s*\n?/);
-  const answer=(parts[0]||'').trim(),heard=(parts[1]||'').trim();
+  const parts=r.full.split(/\n?\s*###\s*\n?/),answer=(parts[0]||'').trim(),heard=(parts[1]||'').trim();
   if(heard){context.push(heard);if(context.length>12)context.shift()}
-  if(my===shown&&answer&&answer!=="-"){q.textContent=heard}
+  if(my===shown&&answer&&answer!=='-'){
+    ans.classList.remove('cursor');heardEl.textContent=heard?('سمعت: '+heard):'';
+    renderSources(r.sources,!!body.tools);
+    current={h:heard,a:answer,s:r.sources};
+  }
 }
-// يعرض الرد وهو بيتكتب (أسرع)
+let current=null;
 async function streamAsk(key,body,my){
   const res=await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:streamGenerateContent?alt=sse`,{method:'POST',headers:{'Content-Type':'application/json','x-goog-api-key':key},body:JSON.stringify(body)});
-  if(res.status!==200)return {status:res.status,text:await res.text(),full:''};
+  if(res.status!==200)return {status:res.status,text:await res.text(),full:'',sources:[]};
   const rd=res.body.getReader(),dec=new TextDecoder();
-  let buf='',full='',started=false;
+  let buf='',full='',started=false;const sources=new Map();
   for(;;){
     const {done,value}=await rd.read();if(done)break;
     buf+=dec.decode(value,{stream:true});
@@ -274,40 +334,58 @@ async function streamAsk(key,body,my){
     while((i=buf.indexOf('\n'))>=0){
       const line=buf.slice(0,i).trim();buf=buf.slice(i+1);
       if(!line.startsWith('data:'))continue;
-      try{for(const p of JSON.parse(line.slice(5)).candidates[0].content.parts){if(!p.thought)full+=p.text||''}}catch(e){}
+      let j;try{j=JSON.parse(line.slice(5))}catch(e){continue}
+      const c=j.candidates&&j.candidates[0];if(!c)continue;
+      for(const p of (c.content&&c.content.parts)||[])if(!p.thought)full+=p.text||'';
+      for(const g of (c.groundingMetadata&&c.groundingMetadata.groundingChunks)||[]){
+        if(g.web&&g.web.uri&&/^https:\/\//.test(g.web.uri)){const t=(g.web.title||g.web.domain||'مصدر').replace(/^www\./,'');if(!sources.has(t))sources.set(t,g.web.uri)}
+      }
       const a=full.split('###')[0].trim();
-      if(a&&a!=='-'&&!/^-\s*$/.test(a)&&my>=shown){
+      if(a&&a!=='-'&&my>=shown){
         if(!started){
           started=true;
-          if(my>shown&&ans.textContent&&!ans.classList.contains('empty'))pushHist(q.textContent,ans.textContent);
-          shown=my;q.textContent='';ans.className='';
+          if(my>shown&&current)pushHist(current);
+          shown=my;current=null;heardEl.textContent='';srcEl.textContent='';ans.className='cursor';
         }
         if(my===shown)ans.textContent=a;
       }
     }
   }
-  return {status:200,text:'',full};
+  return {status:200,text:'',full,sources:[...sources].slice(0,4)};
 }
-function pushHist(h,a){
-  history.unshift({h,a});history=history.slice(0,5);
-  hist.textContent='';
-  for(const it of history){const d=document.createElement('div');const s=document.createElement('small');s.textContent=it.h;d.append(s,document.createTextNode(it.a));hist.append(d)}
+function renderSources(list,searched){
+  srcEl.textContent='';
+  if(list&&list.length){
+    const b=document.createElement('span');b.className='badge';
+    b.innerHTML='<svg class="i" style="width:15px;height:15px"><use href="#i-shield"/></svg>موثّق من';srcEl.append(b);
+    for(const [t,u] of list){const a=document.createElement('a');a.className='chip';a.href=u;a.target='_blank';a.rel='noopener';a.textContent=t;srcEl.append(a)}
+  }else if(searched){const s=document.createElement('span');s.className='nosrc';s.textContent='من غير بحث — رد عام';srcEl.append(s)}
+}
+function pushHist(it){
+  history.unshift(it);history=history.slice(0,6);
+  $('histh').textContent='اللي فات';hist.textContent='';
+  for(const h of history){
+    const d=document.createElement('div');d.className='item';
+    const s=document.createElement('small');s.textContent=h.h;
+    const p=document.createElement('p');p.textContent=h.a;
+    d.append(s,p);
+    if(h.s&&h.s.length){const x=document.createElement('small');x.textContent='✓ '+h.s.map(z=>z[0]).join(' · ');d.append(x)}
+    hist.append(d);
+  }
 }
 
 // ---------- التحكم ----------
 mic.onclick=()=>{
-  if(on){store.set('paused',true);stopAudio();setStatus('واقف — المس المايك عشان يكمّل')}
+  if(on){store.set('paused',true);stopAudio();setState('off','واقف')}
   else{store.set('paused',false);start()}
 };
-$('clear').onclick=()=>{context=[];history=[];hist.textContent='';q.textContent='';ans.className='empty';ans.textContent='موضوع جديد… بيسمع.'};
+$('clear').onclick=()=>{context=[];history=[];current=null;hist.textContent='';$('histh').textContent='';heardEl.textContent='';srcEl.textContent='';ans.className='empty';ans.textContent='موضوع جديد… بيسمع.'};
 $('tap').addEventListener('pointerdown',()=>{store.set('paused',false);start()});
 document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'){on=false;ensure()}});
-setInterval(()=>{ // مراقبة: لو الآيفون قفل الصوت، نرجّعه
-  if(on&&ctx&&ctx.state!=='running'){on=false;mic.classList.remove('on');ensure()}
-},2000);
+setInterval(()=>{if(on&&ctx&&ctx.state!=='running'){on=false;setState('off','بيرجع…');ensure()}},2000);
 
-// البداية
-if(!store.get('key',''))openSetup();
+setState('','جاهز');
+if(!store.get('key',''))openSetup(true);
 else{store.set('paused',false);start()}
 }
 </script>
